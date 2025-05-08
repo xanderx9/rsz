@@ -252,7 +252,7 @@ for i in RD:
 
 # Time and RAM intensive process to make bigger Table
 print(f'Starting to prepare BSGS Table with {bP} elements')
-ice.bsgs_2nd_check_prepare(bP)
+bsgs_2nd_check_prepare(bP)
 
 solvable_diff = []
 for Q in RD:
