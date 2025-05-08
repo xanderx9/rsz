@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """
 
-@author: iceland
+
 @credit: KV
 """
 import random
-import secp256k1 as ice
+import secp256k1 
 
-G = ice.scalar_multiplication(1)
-N = ice.N
+G = scalar_multiplication(1)
+N = N
 
 # ==============================================================================
 
@@ -17,14 +17,14 @@ def inv(a):
 
 
 def valid_rsz(r, s, z, pub_point):
-    RP1 = ice.pub2upub('02' + hex(r)[2:].zfill(64))
-    RP2 = ice.pub2upub('03' + hex(r)[2:].zfill(64))
+    RP1 = pub2upub('02' + hex(r)[2:].zfill(64))
+    RP2 = pub2upub('03' + hex(r)[2:].zfill(64))
     sdr = (s * inv(r)) % N
     zdr = (z * inv(r)) % N
-    FF1 = ice.point_subtraction( ice.point_multiplication(RP1, sdr),
-                                ice.scalar_multiplication(zdr) )
-    FF2 = ice.point_subtraction( ice.point_multiplication(RP2, sdr),
-                                ice.scalar_multiplication(zdr) )
+    FF1 = point_subtraction( point_multiplication(RP1, sdr),
+                                scalar_multiplication(zdr) )
+    FF2 = point_subtraction( point_multiplication(RP2, sdr),
+                                scalar_multiplication(zdr) )
     if FF1 == pub_point or FF2 == pub_point:
         return True
     else:
@@ -51,16 +51,16 @@ pvk = random.SystemRandom().randint(1, 2 ** 256)
 print('=' * 72)
 print('  True Privatekey = ', hex(pvk))
 print('=' * 72)
-Q = ice.scalar_multiplication(pvk)
+Q = scalar_multiplication(pvk)
 
 k1 = random.SystemRandom().randint(1, 2 ** 256)
-P1 = ice.scalar_multiplication(k1)
+P1 = scalar_multiplication(k1)
 r1 = getx(P1)
 z1 = random.SystemRandom().randint(1, 2 ** 256)
 s1 = (inv(k1) * (z1 + r1 * pvk)) % N
 
 k2 = random.SystemRandom().randint(1, 2 ** 256)
-P2 = ice.scalar_multiplication(k2)
+P2 = scalar_multiplication(k2)
 r2 = getx(P2)
 z2 = random.SystemRandom().randint(1, 2 ** 256)
 s2 = (inv(k2) * (z2 + r2 * pvk)) % N
@@ -81,5 +81,5 @@ print('  Starting to solve rsz using difference of k between 2 Tx')
 k = getk1(r1, s1, z1, r2, s2, z2, diff)
 x = getpvk(r1, s1, z1, r2, s2, z2, diff)
 print(f'  Extracted Privatekey = {hex(x)}')
-if getx(ice.scalar_multiplication(k)) == r1 or getx(ice.scalar_multiplication(k)) == r2:
+if getx(scalar_multiplication(k)) == r1 or getx(scalar_multiplication(k)) == r2:
     print(f'====   Nonce Found using 2 rsz diff   = {hex(k)}')
