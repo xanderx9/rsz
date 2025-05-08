@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-@author: iceland
+
 @credit: KV, pianist-coder
 """
 ###################################################################################
 import random
 import math
-import secp256k1 as ice
+import secp256k1 
 import time
 from gmpy2 import mpq
 ###################################################################################
-N = ice.N
+N = N
 fix_bits = 56
 out_file_name = 'pseudo_sig_rsz.txt'
 kbits = 256 - fix_bits
@@ -85,7 +85,7 @@ if __name__ == '__main__':
     n = 1 + minimum_sigs_required(fix_bits)
     print(f'\n Fixed Nonce bits = {fix_bits}           Minimum Signature Required = {n}')
     secret = random.randint(1, N)
-    pub = ice.scalar_multiplication(secret)
+    pub = scalar_multiplication(secret)
     print('###############################################################################')
     print(f'secret: {hex(secret)[2:]}')
     print(f'Pubkey: {pub.hex()}')
@@ -94,7 +94,7 @@ if __name__ == '__main__':
     fixed_k_prefix = random.randrange(2**kbits, N)
     z = [random.randrange(1, N) for i in range(n)]
     nonces = [random.randrange(1, 2**kbits) + fixed_k_prefix for i in range(n)]
-    sigs_r = [getx(ice.scalar_multiplication(nonces[i])) for i in range(n)]
+    sigs_r = [getx(scalar_multiplication(nonces[i])) for i in range(n)]
     mod_inv_nonces = [modinv(nonces[i]) for i in range(n)]
     sigs_s = [(z[i] + secret * sigs_r[i]) * mod_inv_nonces[i] % N for i in range(n)]
     sinv = [modinv(s) for s in sigs_s]
