@@ -226,7 +226,7 @@ for c in range(len(txid)):
                 rL.append( int( e[i][0], 16) )
                 sL.append( int( e[i][1], 16) )
                 zL.append( int( e[i][2], 16) )
-                QL.append( ice.pub2upub(e[i][3]) )
+                QL.append( pub2upub(e[i][3]) )
                 print('='*70,f'\n[Input Index #: {i}] [txid: {txid[c]}]\n     R: {e[i][0]}\n     S: {e[i][1]}\n     Z: {e[i][2]}\nPubKey: {e[i][3]}')
     except: print(f'Skipped the Tx [{txid[c]}]........')
         
